@@ -4,26 +4,30 @@ from app import app
 from config import mydb
 from flask import jsonify
 from flask import flash, request
+from flask_jwt_extended import JWTManager, create_access_token
 
-@app.route('/get', methods=['GET'])
-def Get():
-    return 'null'
+
+# @app.route('/get', methods=['GET'])
+# def Get():
+#     return 'null'
+
+# inserting the datas
 
 @app.route('/insert', methods=['POST'])
-def create_movie():
+def createMovie():
     try:
         json = request.json
         print(json)
        
-        movie_name = json['movie_name']
-        movie_genre = json['movie_genre']
+        movieName = json['movieName']
+        movieGenre = json['movieGenre']
         director = json['director']
         language    = json['language']
-        if   movie_name and movie_genre and director and  language and request.method == 'POST':
+        if   movieName and movieGenre and director and  language and request.method == 'POST':
             conn = mydb.connect()
             cursor = conn.cursor(pymysql.cursors.DictCursor)
-            sqlQuery = "INSERT INTO movie(movie_name, movie_genre, director,  language) VALUES( %s, %s, %s,%s)"
-            bindData = ( movie_name, movie_genre, director,language)
+            sqlQuery = "INSERT INTO movie(movieName, movieGenre, director,  language) VALUES( %s, %s, %s,%s)"
+            bindData = ( movieName, movieGenre, director,language)
             cursor.execute(sqlQuery, bindData)
             # print(cursor.execute(sqlQuery, bindData))
             conn.commit()
@@ -38,13 +42,16 @@ def create_movie():
     finally:
         cursor.close()
         conn.close()
+        
+
+#View all the datas 
 
 @app.route('/view', methods =['GET'])
-def movie():
+def movieView():
     try:
         conn = mydb.connect()
         cursor = conn.cursor(pymysql.cursors.DictCursor)
-        cursor.execute("SELECT movie_id,  movie_name, movie_genre, director,language FROM movie")
+        cursor.execute("SELECT movieId,  movieName, movieGenre, director,language FROM movie")
         empRows = cursor.fetchall()
         respone = jsonify(empRows)
         respone.status_code = 200
@@ -54,13 +61,14 @@ def movie():
     finally:
         cursor.close() 
         conn.close() 
-
-@app.route('/mov/<movie_id>', methods=['GET'])
-def moviedetails(movie_id):
+        
+#View particular movie with respect to movie_id 
+@app.route('/mov/<movieId>', methods=['GET'])
+def movieDetails(movieId):
     try:
         conn = mydb.connect()
         cursor = conn.cursor(pymysql.cursors.DictCursor)
-        cursor.execute("SELECT movie_id ,movie_name,movie_genre, director,language FROM movie WHERE movie_id =%s", (movie_id))
+        cursor.execute("SELECT movieId ,movieName,movieGenre, director,language FROM movie WHERE movie_id =%s", (movieId))
         empRow = cursor.fetchone()
         respone = jsonify(empRow)
         respone.status_code = 200
@@ -70,20 +78,21 @@ def moviedetails(movie_id):
     finally:
         cursor.close()
         conn.close()
-
-@app.route('/update/<movie_id>', methods=['PUT'])
-def updatemovie(movie_id):
+        
+#updating the  data
+@app.route('/update/<movieId>', methods=['PUT'])
+def updatemovie(movieId):
     try:
-        _json = request.json
-        print(_json)
-        _movie_id = _json['movie_id']
-        _movie_name = _json['movie_name']
-        _movie_genre= _json['movie_genre']
-        _director = _json['director']
-        _language  = _json['language']
-        if _movie_name and _movie_genre and  _director and _language  and request.method  == 'PUT':           
-            sqlQuery = ("UPDATE movie SET movie_name= %s, movie_genre= %s, director= %s, language= %s WHERE movie_id=%s")
-            bindData = ( _movie_name, _movie_genre, _director,   _language ,_movie_id)
+        data= request.json
+        print(data)
+        movieId = data['movieId']
+        movieName = data['movieName']
+        movieGenre= data['movieGenre']
+        director = data['director']
+        language  = data['language']
+        if movieName and movieGenre and  director and language  and request.method  == 'PUT':           
+            sqlQuery = ("UPDATE movie SET movieName= %s, movie_genre= %s, director= %s, language= %s WHERE movieId=%s")
+            bindData = ( movieName, movieGenre, director,   language ,movieId)
             conn = mydb.connect()
             cursor = conn.cursor()
             cursor.execute(sqlQuery,bindData)
@@ -100,8 +109,8 @@ def updatemovie(movie_id):
         cursor.close()
         conn.close() 
 
-
-@app.route('/delete/<movie_id>', methods=['DELETE'])
+#deleting the  datas
+@app.route('/delete/<movieId>', methods=['DELETE'])
 def delete_movie(movie_id):
     try:
         conn = mydb.connect()
@@ -113,6 +122,88 @@ def delete_movie(movie_id):
         return respone
     except Exception as e:
         print(e)
+    finally:
+        cursor.close()
+        conn.close()
+
+
+
+#Registration of user
+@app.route('/register', methods=['POST'])
+def register():
+    try:
+        json = request.json
+        print(json)
+        email= json['email']
+        username = json['username']
+        password = json['password']
+        usertype = "user"
+        # hashed = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+        # print(hashed)
+      
+        if email and username and password and usertype and request.method == 'POST':
+            
+            conn = mydb.connect()
+            cursor = conn.cursor(pymysql.cursors.DictCursor)
+            
+            query= "SELECT * FROM user WHERE username= '%s'" % (username)
+            data=cursor.execute(query)
+            print(data)
+            if data>0:
+                conn.commit()
+                response = jsonify('User already Exsist!!')
+                response.status_code = 200
+                return response
+            else:
+                sqlQuery = "INSERT INTO user(email,username,password, usertype) VALUES(%s, %s, %s , %s)"
+                bindData = (email,username,password, usertype)
+                cursor.execute(sqlQuery, bindData)
+                conn.commit()
+                respone = jsonify('User added successfully!')
+                respone.status_code = 200
+                return respone      
+        else:
+            return showMessage()
+    except Exception as e:
+        print(e)
+        return 'Exception'
+    finally:
+        cursor.close()
+        conn.close()
+
+#Login user
+@app.route('/login', methods=['POST'])
+def login():
+    try:
+        json = request.json
+        print(json)
+        username = json['username']
+        password = json['password']
+        # login_hashed = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+        print(username)
+        if username and password and request.method == 'POST':
+            conn = mydb.connect()
+            cursor = conn.cursor(pymysql.cursors.DictCursor)
+
+            sqlQuery="SELECT * FROM user WHERE username= '%s'  and password='%s'" % (username, password)
+            # sqlQuery="SELECT * FROM user WHERE username= '%s' " % (username)
+            # print(sqlQuery)
+            data=cursor.execute(sqlQuery)
+            row = cursor.fetchone()
+            usertype=row.get('usertype')         
+            if data==1:
+                access_token = create_access_token(identity=username)
+                conn.commit()
+                return jsonify(message='Login Successful', access_token=access_token ,usertype=usertype),200
+                
+            else:
+                conn.commit()
+                return jsonify('Bad email or Password... Access Denied!'), 401
+        else:
+            return showMessage()
+    except Exception as e:
+        print(e)
+        return 'Exception'
     finally:
         cursor.close()
         conn.close()
