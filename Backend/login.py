@@ -39,26 +39,6 @@ def index():
            return "access denied"
     
     
-
-       
-
-
-
-
-
-
-    # if(loginDetails['username']=="Ganga" and loginDetails['password']=="password"):
-    #     session['user']=loginDetails['username']
-    #     return "user authenticated"
-    # return "access denied"
-
-
-# @app.route('/home')
-# def home():
-#     if g.user:
-#         return render_template('project.html',user=session['user'])
-#     return redirect(url_for('login'))
-
 @app.before_request
 def before_request():
     g.user = None
