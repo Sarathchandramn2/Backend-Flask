@@ -3,13 +3,9 @@ import json
 from app import app
 from config import mydb
 from flask import jsonify
-from flask import flash, request
+from flask import flash, request,make_response
 from flask_jwt_extended import JWTManager, create_access_token
 
-
-# @app.route('/get', methods=['GET'])
-# def Get():
-#     return 'null'
 
 # inserting the datas
 
@@ -198,7 +194,7 @@ def login():
                 
             else:
                 conn.commit()
-                return jsonify('Bad email or Password... Access Denied!'), 401
+                return unauthorized()
         else:
             return showMessage()
     except Exception as e:
@@ -217,6 +213,17 @@ def showMessage(error=None):
     respone = jsonify(message)
     respone.status_code = 404
     return respone
+
+
+
+@app.errorhandler(401)
+def unauthorized(error):
+    return jsonify({'error': 'Unauthorized access'}), 401
+
+
+@app.errorhandler(406)
+def not_acceptable(error):
+    return make_response(jsonify({'error': 'Not acceptable'}), 406)
 
 if __name__ == "__main__":
     app.run()
