@@ -48,10 +48,11 @@ def add_movie():
     return movie.add_movie(movie_name, movie_genre, director, language)
 
 # view all datas in table
+
 class MovieView:
     def __init__(self, mydb):
         self.mydb = mydb
-    
+
     def view_movie(self):
         try:
             with self.mydb.connect() as conn:
@@ -65,39 +66,31 @@ class MovieView:
             print("Error connecting to database: ", e)
             return jsonify({"error": "Error connecting to database"}), 500
 
+    def view_movie_details(self, movie_id):
+        try:
+            with self.mydb.connect() as conn:
+                with conn.cursor(pymysql.cursors.DictCursor) as cursor:
+                    cursor.execute("SELECT movieId , movieName, movieGenre, director, language FROM movies WHERE movieId =%s", (movie_id))
+                    emp_row = cursor.fetchone()
+                    if not emp_row:
+                        return jsonify({"error":"Movie with the id {} not found".format(movie_id)}),404
+                    respone = jsonify(emp_row)
+                    respone.status_code = 200
+                    return respone
+        except pymysql.MySQLError as e:
+            print("Error connecting to database: ", e)
+            return jsonify({"error": "Error connecting to database"}), 500
+            
+
 movie_view = MovieView(mydb)
 
 @app.route('/view', methods =['GET'])
 def view_movie():
     return movie_view.view_movie()
 
-
-
-#view particular data from table
-
-class MovieView:
-    def __init__(self, mydb):
-        self.mydb = mydb
-    def view_movie_details(self,movieId):
-        try:
-            conn = self.mydb.connect()
-            cursor = conn.cursor(pymysql.cursors.DictCursor)
-            cursor.execute("SELECT movieId , movieName, movieGenre, director, language FROM movies WHERE movieId =%s", (movieId))
-            empRow = cursor.fetchone()
-            if not empRow:
-                return jsonify({"error":"Movie with the id {} not found".format(movieId)}),404
-            respone = jsonify(empRow)
-            respone.status_code = 200
-            return respone
-        except pymysql.MySQLError as e:
-            print("Error connecting to database: ", e)
-        return jsonify({"error": "Error connecting to database"}), 500
-
-movie_details_view = MovieView(mydb)
-
-@app.route('/view/<movieId>', methods=['GET'])
-def MovieDetails(movieId):
-    return movie_details_view.view_movie_details(movieId)
+@app.route('/view/<movie_id>', methods=['GET'])
+def movie_details(movie_id):
+    return movie_view.view_movie_details(movie_id)
 
 #update the movie details
 class MovieUpdater:
