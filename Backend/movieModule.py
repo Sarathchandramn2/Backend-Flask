@@ -17,26 +17,21 @@ from flask import flash, request
 
 #insert movie details into movie table
 class Movie:
-    def __init__(self, movie_name: str, movie_genre: str, director: str, language: str):
-        self.movie_name = movie_name
-        self.movie_genre = movie_genre
-        self.director = director
-        self.language = language
+    def __init__(self, mydb):
+        self.mydb = mydb
 
-    def add_movie(self):
+    def add_movie(self, movie_name, movie_genre, director, language):
         try:
-            conn = mydb.connect()
-            cursor = conn.cursor(pymysql.cursors.DictCursor)
-            sql_query = "INSERT INTO movies(movieName ,movieGenre, director,language) VALUES(%s, %s, %s, %s)  "
-            bind_data = (self.movie_name, self.movie_genre, self.director, self.language)
-            cursor.execute(sql_query, bind_data)
-            conn.commit()
-            return jsonify('Movie details added successfully!')
+            with self.mydb.connect() as conn:
+                with conn.cursor() as cursor:
+                    cursor.execute("INSERT INTO movies(movieName, movieGenre, director, language) VALUES(%s, %s, %s, %s)", (movie_name, movie_genre, director, language))
+                    conn.commit()
+            return jsonify({'message': 'Movie details added successfully!'})
         except pymysql.err.IntegrityError as e:
-            return jsonify(error="Duplicate entry"), 409
+            return jsonify({'error': 'Duplicate entry'}), 409
         except Exception as e:
             print(e)
-            return jsonify(error="Internal server error"), 500
+            return jsonify({'error': 'Internal server error'}), 500
 
 @app.route('/insert', methods=['POST'])
 def add_movie():
@@ -45,16 +40,12 @@ def add_movie():
     movie_genre = json_data.get('movieGenre') 
     director = json_data.get('director')
     language = json_data.get('language')
-  
-    if not all([movie_name, movie_genre, director, language]):
-        raise ValueError("Missing required parameters in JSON object")
-        
-    if request.method != 'POST':
-        raise ValueError("Invalid request method, must be POST")
-  
-    movie = Movie(movie_name, movie_genre, director, language)
-    return movie.add_movie()
 
+    if not all([movie_name, movie_genre, director, language]):
+        return jsonify({'error': 'Missing required parameters in JSON object'}), 400
+
+    movie = Movie(mydb)
+    return movie.add_movie(movie_name, movie_genre, director, language)
 
 # view all datas in table
 class MovieView:
