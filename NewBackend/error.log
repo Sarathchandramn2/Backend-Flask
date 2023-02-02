@@ -1,0 +1,31 @@
+2023-02-01 11:27:57,778 - views.admin.movie - ERROR - ValueError: Movie name should be a string
+2023-02-01 11:34:35,082 - views.admin.movie - ERROR - Exception: chech_For_String() missing 4 required positional arguments: 'moviename', 'moviegenre', 'director', and 'language'
+2023-02-01 11:36:25,503 - views.admin.movie - ERROR - Exception: chech_For_String() missing 3 required positional arguments: 'moviegenre', 'director', and 'language'
+2023-02-01 11:36:36,825 - views.admin.movie - ERROR - Exception: chech_For_String() missing 3 required positional arguments: 'moviegenre', 'director', and 'language'
+2023-02-01 11:37:20,913 - views.admin.movie - ERROR - Exception: local variable 'moviegenre' referenced before assignment
+2023-02-01 11:37:21,813 - views.admin.movie - ERROR - Exception: local variable 'moviegenre' referenced before assignment
+2023-02-01 11:41:25,223 - views.admin.movie - ERROR - ValueError: 1 should be a string
+2023-02-01 11:41:56,992 - views.admin.movie - ERROR - ValueError: {value} should be a string
+2023-02-01 11:44:28,135 - views.admin.movie - ERROR - ValueError: 1 should be a string
+2023-02-01 11:47:24,311 - views.admin.movie - ERROR - ValueError:  cannot be empty or only whitespace
+2023-02-01 11:47:35,953 - views.admin.movie - ERROR - ValueError:  cannot be empty or only whitespace
+2023-02-01 11:47:40,723 - views.admin.movie - ERROR - ValueError: 1 should be a string
+2023-02-01 11:57:37,334 - views.admin.movie - ERROR - Exception: check_fields() missing 3 required positional arguments: 'moviegenre', 'language', and 'director'
+2023-02-01 11:58:06,891 - views.admin.movie - ERROR - ValueError: 1 should be a string
+2023-02-01 15:21:31,604 - views.admin.movie - ERROR - KeyError: 'moviename'
+2023-02-01 15:29:18,777 - views.admin.movie - ERROR - ValueError: 2 should be a string
+2023-02-01 15:31:41,530 - views.admin.movie - ERROR - KeyError: 'moviename'
+2023-02-01 15:36:50,701 - views.admin.movie - ERROR - KeyError: 'moviename'
+2023-02-01 15:36:56,698 - views.admin.movie - ERROR - IntegrityError: (1452, 'Cannot add or update a child row: a foreign key constraint fails (`dbss`.`movies`, CONSTRAINT `movies_ibfk_1` FOREIGN KEY (`moviegenre`) REFERENCES `genre` (`genreid`))')
+2023-02-01 15:37:11,679 - views.admin.movie - ERROR - IntegrityError: (1452, 'Cannot add or update a child row: a foreign key constraint fails (`dbss`.`movies`, CONSTRAINT `movies_ibfk_1` FOREIGN KEY (`moviegenre`) REFERENCES `genre` (`genreid`))')
+2023-02-01 15:37:26,264 - views.admin.movie - ERROR - IntegrityError: (1452, 'Cannot add or update a child row: a foreign key constraint fails (`dbss`.`movies`, CONSTRAINT `movies_ibfk_1` FOREIGN KEY (`moviegenre`) REFERENCES `genre` (`genreid`))')
+2023-02-01 15:47:42,496 - Logger - ERROR - Exception: 400 Bad Request: Failed to decode JSON object: Expecting property name enclosed in double quotes: line 2 column 4 (char 6)
+2023-02-01 20:01:34,157 - Logger - ERROR - KeyError: 'moviename'
+2023-02-01 20:02:54,072 - Logger - ERROR - KeyError: 'moviename'
+2023-02-01 20:03:04,238 - Logger - ERROR - KeyError: 'moviename'
+2023-02-01 20:03:08,279 - Logger - ERROR - KeyError: 'moviename'
+2023-02-01 20:03:14,239 - Logger - ERROR - KeyError: 'moviename'
+2023-02-01 20:03:28,338 - Logger - ERROR - Exception: (1452, 'Cannot add or update a child row: a foreign key constraint fails (`dbss`.`movies`, CONSTRAINT `movies_ibfk_1` FOREIGN KEY (`moviegenre`) REFERENCES `genre` (`genreid`))')
+2023-02-01 21:05:21,038 - Logger - ERROR - IntegrityError: (1452, 'Cannot add or update a child row: a foreign key constraint fails (`moviecrud`.`movies`, CONSTRAINT `movies_ibfk_1` FOREIGN KEY (`moviegenre`) REFERENCES `genre` (`genreid`))')
+2023-02-01 21:05:34,966 - Logger - ERROR - IntegrityError: (1452, 'Cannot add or update a child row: a foreign key constraint fails (`moviecrud`.`movies`, CONSTRAINT `movies_ibfk_1` FOREIGN KEY (`moviegenre`) REFERENCES `genre` (`genreid`))')
+2023-02-02 10:29:57,129 - Logger - ERROR - Exception: (1452, 'Cannot add or update a child row: a foreign key constraint fails (`moviecrud`.`movies`, CONSTRAINT `movies_ibfk_1` FOREIGN KEY (`moviegenre`) REFERENCES `genre` (`genreid`))')
